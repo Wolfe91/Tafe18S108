@@ -1,0 +1,208 @@
+﻿<!--
+    Start Finance - An to manage your personal finances.
+    Copyright (C) 2016  Jijo Bose
+    Start Finance is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Start Finance is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Start Finance.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+<Page
+    x:Class="StartFinance.Views.DashBoardPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Behaviors="using:Template10.Behaviors"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:local="using:StartFinance.Views"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:pieCharts="using:CrossPieCharts.UWP.PieCharts"
+    Loaded="Page_Loaded"
+    xmlns:vm="using:StartFinance.ViewModels" mc:Ignorable="d">
+
+    <Page.DataContext>
+        <vm:MainPageViewModel x:Name="ViewModel" />
+    </Page.DataContext>
+
+    <Page.Resources>
+        <DataTemplate x:Key="AssetListDataViews">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding AssetName}" Style="{ThemeResource SubheaderTextBlockStyle}" Padding="0,0,15,0"/>
+                    <TextBlock Text="{Binding AssetValue}" Style="{ThemeResource SubheaderTextBlockStyle}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <RelativePanel Background="Orange">
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for narrow view  -->
+                        <!--<Setter Target="stateTextBox.Text" Value="Narrow Visual State" />-->
+                        <Setter Target="SecondCol.(Width)" Value="0"/>
+                        <Setter Target="ReportGrid.(Grid.Column)" Value="0"/>
+                        <Setter Target="ReportGrid.(Grid.Row)" Value="2"/>
+                        <Setter Target="CreditGrid.(Grid.Column)" Value="0"/>
+                        <Setter Target="CreditGrid.(Grid.Row)" Value="1"/>
+                        <Setter Target="WishList.(Grid.Row)" Value="3"/>
+                        <Setter Target="WishList.(Grid.Column)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="720" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for normal view  -->
+                        <!--<Setter Target="stateTextBox.Text" Value="Normal Visual State" />-->
+                        <Setter Target="TopFourCols.(Height)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for wide view  -->
+                        <!--<Setter Target="stateTextBox.Text" Value="Wide Visual State" />-->
+                        <Setter Target="TopFourCols.(Height)" Value="0"/>
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+                             RelativePanel.AlignRightWithPanel="True"
+                             RelativePanel.AlignTopWithPanel="True" Text="DashBoard">
+
+            <!--  secondary commands  -->
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Click="{x:Bind ViewModel.GotoSettings}" Label="Settings" />
+                <AppBarButton Click="{x:Bind ViewModel.GotoPrivacy}" Label="Privacy" />
+                <AppBarButton Click="{x:Bind ViewModel.GotoAbout}" Label="About" />
+            </controls:PageHeader.SecondaryCommands>
+
+        </controls:PageHeader>
+
+        <!--- Page starts here-->
+
+
+        <Pivot>
+            <RelativePanel.Below>pageHeader</RelativePanel.Below>
+            <PivotItem Header="Your Summary...">
+                <ScrollViewer>
+                    <Grid Background="Orange">
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="260"/>
+                            <RowDefinition Height="300"/>
+                            <RowDefinition x:Name="TopThreeCols" Height="250"/>
+                            <RowDefinition x:Name="TopFourCols" Height="250"/>
+                        </Grid.RowDefinitions>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition x:Name="SecondCol" Width="*"/>
+                        </Grid.ColumnDefinitions>
+
+                        <Grid x:Name="DashTop" Grid.Row="0" HorizontalAlignment="Left">
+                            <Pivot HorizontalAlignment="Center">
+                                <PivotItem Header="Money">
+                                    <Grid>
+                                        <StackPanel>
+                                            <TextBlock x:Name="AccountTotal" Text="Account Total"
+                                             Style="{ThemeResource SubheaderTextBlockStyle}" FontWeight="Bold"/>
+                                            <TextBlock x:Name="Assets" Text="Asset total"
+                                             Style="{ThemeResource SubheaderTextBlockStyle}" HorizontalAlignment="Left" FontWeight="Bold"/>
+                                        </StackPanel>
+                                        <TextBlock x:Name="FullTotal" Text="Full Total" Style="{ThemeResource HeaderTextBlockStyle}"
+                                        FontWeight="Bold" VerticalAlignment="Bottom"/>
+                                    </Grid>
+                                </PivotItem>
+
+                                <PivotItem Header="Debts">
+                                    <StackPanel>
+                                        <TextBlock x:Name="Debts" Text="Debt Total"
+                                       FontSize="30" FontWeight="Bold"/>
+                                        <Grid>
+                                            <RelativePanel.Below>stateTextBox</RelativePanel.Below>
+                                            <RelativePanel.AlignLeftWith>parameterResizer</RelativePanel.AlignLeftWith>
+                                            <pieCharts:PieChart x:Name="DebtChart"
+                                             Radius="50"
+                                             Segment360Color="LightGreen"
+                                             SegmentColor="Red"
+                                             StrokeThickness="30" />
+
+                                            <TextBlock x:Name="CenterValue"
+                                            VerticalAlignment="Center"
+                                            HorizontalAlignment="Center"
+                                            FontWeight="Bold"
+                                            FontSize="20"
+                                            Foreground="{ThemeResource ApplicationForegroundThemeBrush}" />
+                                        </Grid>
+                                    </StackPanel>
+                                </PivotItem>
+                            </Pivot>
+                        </Grid>
+
+                        <Grid x:Name="CreditGrid" Grid.Row="1">
+                            <Grid Background="#FFEEC923">
+                                <Pivot Title="Financial Status">
+                                    <PivotItem Header="Credit Rating">
+                                        <StackPanel>
+                                            <TextBlock x:Name="CreditRatio" Text="Credit Ratings"
+                                                   FontSize="30" Padding="0,25,0,0"
+                                                   FontWeight="Bold"/>
+                                            <TextBlock x:Name="RatioReportTxt" TextWrapping="Wrap"
+                                                       Text="Credit Ratio Descriptions"/>
+                                        </StackPanel>
+                                    </PivotItem>
+                                </Pivot>
+                            </Grid>
+                        </Grid>
+
+                        <Grid x:Name="ReportGrid" Grid.Column="1">
+                            <Grid Background="#FF0C90EC">
+                                <Pivot Title="Report">
+                                    <PivotItem Header="Monthly">
+                                        <Grid>
+                                            <TextBlock x:Name="MonthlyData" Text="Monthly Data"
+                                                   FontSize="36" />
+                                        </Grid>
+                                    </PivotItem>
+                                </Pivot>
+                            </Grid>
+                        </Grid>
+
+                        <Grid x:Name="WishList" Grid.Row="1" Grid.Column="1">
+                            <Pivot>
+                                <PivotItem Header="Assets List">
+                                    <Grid>
+                                        <ListView x:Name="Assetme" HorizontalAlignment="Stretch"
+                                      VerticalAlignment="Stretch" BorderBrush="White" BorderThickness="2"
+                                      ItemTemplate="{StaticResource AssetListDataViews}">
+                                        </ListView>
+                                    </Grid>
+                                </PivotItem>
+                            </Pivot>
+
+                        </Grid>
+                    </Grid>
+                </ScrollViewer>
+            </PivotItem>
+        </Pivot>
+    </RelativePanel>
+</Page>

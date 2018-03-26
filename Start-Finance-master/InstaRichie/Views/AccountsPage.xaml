@@ -1,0 +1,133 @@
+﻿<!--
+    Start Finance - An to manage your personal finances.
+    Copyright (C) 2016  Jijo Bose
+    Start Finance is free software: you can redistribute it and/or modify
+    it under the terms of the GNU General Public License as published by
+    the Free Software Foundation, either version 3 of the License, or
+    (at your option) any later version.
+    Start Finance is distributed in the hope that it will be useful,
+    but WITHOUT ANY WARRANTY; without even the implied warranty of
+    MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+    GNU General Public License for more details.
+    You should have received a copy of the GNU General Public License
+    along with Start Finance.  If not, see <http://www.gnu.org/licenses/>.
+
+-->
+
+ <Page
+    x:Class="StartFinance.Views.AccountsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:Behaviors="using:Template10.Behaviors"
+    xmlns:Core="using:Microsoft.Xaml.Interactions.Core"
+    xmlns:Interactivity="using:Microsoft.Xaml.Interactivity"
+    xmlns:controls="using:Template10.Controls"
+    xmlns:local="using:StartFinance.Views"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:vm="using:StartFinance.ViewModels"
+    Loaded="Page_Loaded"
+    mc:Ignorable="d">
+
+    <Page.Resources>
+        <DataTemplate x:Key="TransListView">
+            <Grid>
+                <StackPanel Orientation="Horizontal">
+                    <TextBlock Text="{Binding ID}" Padding="0,0,15,0"/>
+                    <TextBlock Text="{Binding AccountName}" Padding="0,0,15,0"/>
+                    <TextBlock Text="{Binding InitialAmount}" Padding="0,0,15,0"/>
+                    <TextBlock Text="{Binding OverDraft}"/>
+                </StackPanel>
+            </Grid>
+        </DataTemplate>
+    </Page.Resources>
+
+    <Page.DataContext>
+        <vm:MainPageViewModel x:Name="ViewModel" />
+    </Page.DataContext>
+
+    <RelativePanel Background="{ThemeResource ApplicationPageBackgroundThemeBrush}">
+
+        <VisualStateManager.VisualStateGroups>
+            <VisualStateGroup x:Name="AdaptiveVisualStateGroup">
+                <VisualState x:Name="VisualStateNarrow">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NarrowMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for narrow view  -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateNormal">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource NormalMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for normal view  -->
+                    </VisualState.Setters>
+                </VisualState>
+                <VisualState x:Name="VisualStateWide">
+                    <VisualState.StateTriggers>
+                        <AdaptiveTrigger MinWindowWidth="{StaticResource WideMinWidth}" />
+                    </VisualState.StateTriggers>
+                    <VisualState.Setters>
+                        <!--  TODO: change properties for wide view  -->
+                    </VisualState.Setters>
+                </VisualState>
+            </VisualStateGroup>
+        </VisualStateManager.VisualStateGroups>
+
+        <controls:PageHeader x:Name="pageHeader" RelativePanel.AlignLeftWithPanel="True"
+			RelativePanel.AlignRightWithPanel="True"
+			RelativePanel.AlignTopWithPanel="True" Text="Add/Remove Accounts">
+
+            <!--  secondary commands  -->
+            <controls:PageHeader.SecondaryCommands>
+                <AppBarButton Click="{x:Bind ViewModel.GotoSettings}" Label="Settings" />
+                <AppBarButton Click="{x:Bind ViewModel.GotoPrivacy}" Label="Privacy" />
+                <AppBarButton Click="{x:Bind ViewModel.GotoAbout}" Label="About" />
+            </controls:PageHeader.SecondaryCommands>
+        </controls:PageHeader>
+
+        <controls:PageHeader x:Name="pageFooter" RelativePanel.AlignLeftWithPanel="True"
+			RelativePanel.AlignRightWithPanel="True"
+			RelativePanel.AlignBottomWithPanel="True">
+
+            <!--  secondary commands  -->
+            <controls:PageHeader.PrimaryCommands>
+                <AppBarButton Icon="Add" Label="Add Account" Click="AppBarButton_Click" />
+                <AppBarButton Icon="Delete" Label="Delete Account" Click="DeleteItem_Click" />
+            </controls:PageHeader.PrimaryCommands>
+        </controls:PageHeader>
+
+
+        <Pivot>
+            <RelativePanel.Below>pageHeader</RelativePanel.Below>
+            <RelativePanel.Above>pageFooter</RelativePanel.Above>
+            <PivotItem Header="Accounts">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="185"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <StackPanel x:Name="PageStart" Grid.Row="0" VerticalAlignment="Top"
+                        HorizontalAlignment="Stretch"
+                        Orientation="Vertical" Margin="10,5,10,0">
+                        <TextBox x:Name="AccName" Header="Account Name" PlaceholderText="Cash Wallet, Savings or Credit Card" TextWrapping="Wrap"/>
+                        <TextBox x:Name="MoneyIn" Header="Initial Amount" PlaceholderText="100.00" InputScope="Number" TextWrapping="Wrap"/>
+                        <ToggleSwitch x:Name="overdraft" Header="Enable Overdraft"
+                                      HorizontalAlignment="Stretch" ToolTipService.Placement="Mouse"
+                                      ToolTipService.ToolTip="Mostly used for Credit Cards"
+                                      VerticalAlignment="Stretch"/>
+
+                    </StackPanel>
+                    <ListView x:Name="TransactionList" Grid.Row="1" ItemTemplate="{StaticResource TransListView}"
+                              HorizontalAlignment="Stretch" VerticalAlignment="Stretch">
+                        <RelativePanel.Below>PageStart</RelativePanel.Below>
+                    </ListView>
+                </Grid>
+            </PivotItem>
+        </Pivot>
+
+    </RelativePanel>
+</Page>
